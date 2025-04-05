@@ -1,0 +1,115 @@
+# Cursor Rules for Project
+
+## Project Overview
+
+**Project Name:** Ocala Property Landing Page\
+**Description:** A modern, responsive website integrated with VRBO and Airbnb to display properties listed under a specific user account, serving as a landing page with booking redirections.\
+**Tech Stack:** React, Next.js, TypeScript, Tailwind CSS, Framer Motion, Firebase, Jest, Cypress, Playwright.
+
+### Key Features:
+
+*   VRBO and Airbnb API integration
+*   Interactive property cards
+*   Advanced date range picker with filters
+*   Responsive UI with Tailwind CSS and Framer Motion
+*   Real-time form validation and SEO optimization
+*   Localization and currency settings
+*   Analytics using Google Analytics
+*   Secure data protection and compliance
+
+## Project Structure
+
+### Root Directory:
+
+*   Contains main configuration files like `.gitignore`, `README.md`, and project documentation.
+
+### /frontend:
+
+*   **Description:** Contains all frontend-related code, including components, styles, and assets.
+
+/components:
+
+*   **PropertyCard.tsx:** Component for displaying property details
+*   **BookingButton.tsx:** Redirect component to VRBO/Airbnb
+*   **DateRangePicker.tsx:** Component for date selection
+*   **NavigationBar.tsx:** Main navigation component
+*   **Footer.tsx:** Site footer with legal links
+
+/assets:
+
+*   **/images:** Store static images for base setup
+*   **/icons:** SVG/PNG icons from Heroicons or Radix UI
+
+/styles:
+
+*   **tailwind.config.js:** Tailwind CSS configuration
+*   **global.css:** Base styling and theme settings
+
+### /backend:
+
+*   **Description:** Contains backend-related code, including serverless functions and API routes.
+
+/controllers:
+
+*   **PropertyController.js:** Manages property data retrieval
+
+/models:
+
+*   **PropertyModel.js:** Data models for properties
+
+/routes:
+
+*   **apiRoutes.js:** API endpoints for frontend access
+
+### /config:
+
+*   **firebase.json:** Configuration for Firebase serverless settings
+
+### /tests:
+
+*   **frontend.spec.ts:** Unit and integration tests for frontend components
+*   **backend.spec.ts:** Integration tests for backend services
+
+## Development Guidelines
+
+### Coding Standards:
+
+*   Use Prettier and ESLint for code formatting and linting.
+*   Adhere to TypeScript strict typing for maintainability.
+
+### Component Organization:
+
+*   Follow atomic design principles, keeping components modular and reusable.
+*   Enforce consistent naming conventions for components and files.
+
+## Cursor IDE Integration
+
+### Setup Instructions:
+
+1.  Clone the repository from GitHub.
+2.  Install dependencies using `pnpm install`.
+3.  Run the development server with `pnpm dev`.
+4.  Use Firebase CLI for backend functions deployment.
+
+### Key Commands:
+
+*   `pnpm run lint`: Run linter to check for code style issues.
+*   `pnpm run build`: Build the project for production.
+*   `firebase deploy`: Deploy changes to Firebase hosting and functions.
+
+## Additional Context
+
+### User Roles:
+
+*   **Visitor:** Browsing and booking redirection capabilities
+*   **Admin:** Management of backend data (future implementation)
+
+### Accessibility Considerations:
+
+*   Ensure all interactive elements have keyboard focus states.
+*   Use `aria-` attributes for enhancing accessibility compliance.
+
+This document is tailored to guide the Cursor IDE in facilitating a streamlined and efficient development cycle for the Ocala Property Landing Page project, ensuring all critical guidelines and structures are adhered to.
+
+
+* Always reference the instructions folder for any additional context or rules.
