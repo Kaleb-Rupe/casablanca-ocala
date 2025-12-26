@@ -8,7 +8,124 @@ import { useInView } from "react-intersection-observer";
 import { InstagramPost } from "@/types/instagram";
 import { fetchInstagramPosts } from "@/lib/services/instagram";
 import GallerySkeleton from "@/components/gallery/GallerySkeleton";
-import { gallerySections } from "@/data/gallerySections";
+import { gallerySections, type GallerySection } from "@/data/gallerySections";
+
+type GallerySectionTabsProps = {
+  sections: GallerySection[];
+  selectedSectionId: string;
+  onSelect: (id: string) => void;
+};
+
+function GallerySectionTabs({
+  sections,
+  selectedSectionId,
+  onSelect,
+}: GallerySectionTabsProps) {
+  const chipRowRef = useRef<HTMLDivElement | null>(null);
+  const [showScrollHint, setShowScrollHint] = useState(
+    sections.length > 0 && sections[0]?.id !== ""
+  );
+  const scrollHintDismissedRef = useRef(false);
+  const scrollHintRafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const node = chipRowRef.current;
+    if (!node) return;
+
+    const hideScrollHint = () => {
+      if (scrollHintDismissedRef.current) return;
+      scrollHintDismissedRef.current = true;
+      if (scrollHintRafRef.current) {
+        cancelAnimationFrame(scrollHintRafRef.current);
+      }
+      scrollHintRafRef.current = window.requestAnimationFrame(() => {
+        setShowScrollHint(false);
+      });
+    };
+
+    const evaluateOverflow = () => {
+      const needsScroll = node.scrollWidth - node.clientWidth > 8;
+      if (!needsScroll) {
+        scrollHintDismissedRef.current = false;
+        setShowScrollHint(false);
+        return;
+      }
+
+      if (!scrollHintDismissedRef.current) {
+        setShowScrollHint(node.scrollLeft < 12);
+      }
+    };
+
+    const handleScroll = () => {
+      if (node.scrollLeft > 20) {
+        hideScrollHint();
+      }
+    };
+
+    evaluateOverflow();
+    node.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", evaluateOverflow);
+
+    return () => {
+      node.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", evaluateOverflow);
+      if (scrollHintRafRef.current) {
+        cancelAnimationFrame(scrollHintRafRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div className="relative">
+      <div
+        ref={chipRowRef}
+        className="flex gap-3 overflow-x-auto overflow-y-visible pb-3 pr-10 scroll-smooth snap-x no-scrollbar"
+      >
+        {sections.map((section) => {
+          const isActive = section.id === selectedSectionId;
+          return (
+            <button
+              key={section.id}
+              type="button"
+              onClick={() => onSelect(section.id)}
+              className={`snap-start rounded-full border px-4 py-2 text-sm font-medium transition ${
+                isActive
+                  ? "border-transparent bg-coral text-white shadow-lg shadow-coral/30"
+                  : "border-darkGray/15 bg-white text-darkGray hover:border-darkGray/40"
+              }`}
+              aria-pressed={isActive}
+            >
+              {section.name}
+            </button>
+          );
+        })}
+      </div>
+      <AnimatePresence>
+        {showScrollHint && (
+          <motion.div
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 16 }}
+            className="pointer-events-none absolute inset-y-0 right-0 flex w-20 items-center justify-end bg-gradient-to-l from-white via-white/60 to-transparent pr-4 md:hidden"
+          >
+            <motion.div
+              initial={{ x: -3 }}
+              animate={{ x: 3 }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "reverse",
+                duration: 1,
+              }}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-darkGray/20 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+            >
+              <ChevronRight className="h-3.5 w-3.5 text-darkGray/80" />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function GalleryPage() {
   const [posts, setPosts] = useState<InstagramPost[]>([]);
@@ -16,7 +133,6 @@ export default function GalleryPage() {
   const [selectedSectionId, setSelectedSectionId] = useState(
     gallerySections[0]?.id ?? ""
   );
-  const [showScrollHint, setShowScrollHint] = useState(true);
   const [lightbox, setLightbox] = useState<{
     sectionId: string;
     index: number;
@@ -25,8 +141,6 @@ export default function GalleryPage() {
   const [imageLoadState, setImageLoadState] = useState<Record<string, boolean>>(
     {}
   );
-
-  const chipRowRef = useRef<HTMLDivElement | null>(null);
 
   const { ref, inView } = useInView({
     threshold: 0.1,
@@ -53,31 +167,6 @@ export default function GalleryPage() {
     () => gallerySections.find((section) => section.id === selectedSectionId),
     [selectedSectionId]
   );
-
-  useEffect(() => {
-    const node = chipRowRef.current;
-    if (!node) return;
-
-    const evaluateOverflow = () => {
-      const needsScroll = node.scrollWidth - node.clientWidth > 8;
-      setShowScrollHint(needsScroll && node.scrollLeft < 12);
-    };
-
-    const handleScroll = () => {
-      if (node.scrollLeft > 20) {
-        setShowScrollHint(false);
-      }
-    };
-
-    evaluateOverflow();
-    node.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", evaluateOverflow);
-
-    return () => {
-      node.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", evaluateOverflow);
-    };
-  }, []);
 
   const handleImageLoaded = useCallback((url: string) => {
     setImageLoadState((prev) => {
@@ -173,54 +262,11 @@ export default function GalleryPage() {
             </p>
           </div>
 
-          <div className="relative">
-            <div
-              ref={chipRowRef}
-              className="flex gap-3 overflow-x-auto overflow-y-visible pb-3 pr-10 scroll-smooth snap-x no-scrollbar"
-            >
-              {gallerySections.map((section) => {
-                const isActive = section.id === selectedSectionId;
-                return (
-                  <button
-                    key={section.id}
-                    type="button"
-                    onClick={() => setSelectedSectionId(section.id)}
-                    className={`snap-start rounded-full border px-4 py-2 text-sm font-medium transition ${
-                      isActive
-                        ? "border-transparent bg-coral text-white shadow-lg shadow-coral/30"
-                        : "border-darkGray/15 bg-white text-darkGray hover:border-darkGray/40"
-                    }`}
-                    aria-pressed={isActive}
-                  >
-                    {section.name}
-                  </button>
-                );
-              })}
-            </div>
-            <AnimatePresence>
-              {showScrollHint && (
-                <motion.div
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 16 }}
-                  className="pointer-events-none absolute inset-y-0 right-0 flex w-20 items-center justify-end bg-gradient-to-l from-white via-white/60 to-transparent pr-4 md:hidden"
-                >
-                  <motion.div
-                    initial={{ x: -3 }}
-                    animate={{ x: 3 }}
-                    transition={{
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      duration: 1,
-                    }}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-darkGray/20 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
-                  >
-                    <ChevronRight className="h-3.5 w-3.5 text-darkGray/80" />
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <GallerySectionTabs
+            sections={gallerySections}
+            selectedSectionId={selectedSectionId}
+            onSelect={setSelectedSectionId}
+          />
 
           <AnimatePresence mode="wait">
             {selectedSection && (

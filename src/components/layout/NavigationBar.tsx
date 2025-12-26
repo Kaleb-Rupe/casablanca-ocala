@@ -3,11 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "#properties", label: "Properties" },
+  { href: "/#properties", label: "Properties" },
   { href: "/gallery", label: "Gallery" },
   { href: "#contact", label: "Contact" },
 ] as const;
@@ -92,6 +92,58 @@ export default function Header() {
       desiredOffset
     );
   }, [isMenuOpen]);
+
+  const getHeaderOffsetValue = useCallback(() => {
+    const parsed = parseFloat(headerOffsetRef.current);
+    if (!Number.isNaN(parsed) && parsed > 0) {
+      return parsed;
+    }
+    const headerHeight = shellRef.current?.offsetHeight ?? 96;
+    return headerHeight + 24;
+  }, []);
+
+  const scrollToHash = useCallback(
+    (hash: string) => {
+      if (
+        typeof window === "undefined" ||
+        typeof document === "undefined" ||
+        !hash ||
+        !hash.startsWith("#")
+      ) {
+        return;
+      }
+
+      const target = document.querySelector(hash);
+      if (!target) return;
+
+      const targetTop = target.getBoundingClientRect().top + window.scrollY;
+      const desiredTop = targetTop - getHeaderOffsetValue();
+      const maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const nextTop = Math.max(Math.min(desiredTop, maxScroll), 0);
+
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: nextTop, behavior: "smooth" });
+      });
+    },
+    [getHeaderOffsetValue]
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleHashChange = () => {
+      if (!window.location.hash) return;
+      scrollToHash(window.location.hash);
+    };
+
+    handleHashChange();
+    window.addEventListener("hashchange", handleHashChange);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, [scrollToHash]);
 
   const headerPosition = "fixed inset-x-0 top-0";
 

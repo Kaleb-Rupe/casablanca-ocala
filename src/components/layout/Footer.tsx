@@ -8,7 +8,11 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-darkGray text-white py-12">
+    <footer
+      id="contact"
+      className="bg-darkGray text-white py-12"
+      style={{ scrollMarginTop: "calc(var(--header-offset, 0px) + 24px)" }}
+    >
       <div className=" mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Contact Info */}

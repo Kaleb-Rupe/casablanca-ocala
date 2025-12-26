@@ -12,9 +12,15 @@ export default function Home() {
           <HeroSection />
 
           {/* Main Content */}
-            <section id="properties" className="my-8">
-              <PropertyCard {...mockProperty} />
-            </section>
+          <section
+            id="properties"
+            className="my-8"
+            style={{
+              scrollMarginTop: "calc(var(--header-offset, 0px) + 24px)",
+            }}
+          >
+            <PropertyCard {...mockProperty} />
+          </section>
         </div>
       </div>
 
