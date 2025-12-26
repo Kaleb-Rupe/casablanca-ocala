@@ -76,7 +76,6 @@ export const gallerySections: GallerySection[] = [
     "Orange Room/Ocala House -13.webp",
     "Orange Room/Ocala House -14.webp",
     "Orange Room/Ocala House -15.webp",
-    "Orange Room/Ocala House -36.webp",
   ]),
   section("green-room", "Green Room", "Nature-inspired suite with views.", [
     "Green Room/Ocala House -9.webp",
