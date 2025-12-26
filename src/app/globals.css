@@ -5,19 +5,35 @@
 :root {
   --coral: #EE4D64;
   --dark-gray: #2D2D2D;
-  --background: #ffffff;
+  --background: #F5F4F1;
   --foreground: var(--dark-gray);
   --beige: #F5F4F1;
+  --header-offset: 0px;
+  --safe-area-top: env(safe-area-inset-top);
+  --hero-mobile-height: 65vh;
+  --hero-desktop-height: 90vh;
+}
+
+@supports (height: 100svh) {
+  :root {
+    --hero-mobile-height: 65svh;
+    --hero-desktop-height: 90svh;
+  }
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    overscroll-behavior: none;
   }
 
   body {
-    @apply text-darkGray bg-white;
+    @apply text-darkGray;
+    background-color: var(--background);
     font-family: var(--font-inter);
+    overscroll-behavior-y: contain;
+    overscroll-behavior-x: none;
+    min-height: 100vh;
   }
 
   h1,
@@ -85,6 +101,15 @@
   background: white;
   padding: 8px;
   border-radius: 8px;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* Date Picker Custom Styles */

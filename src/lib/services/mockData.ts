@@ -21,13 +21,16 @@ export interface Property {
   };
 }
 
+const PROPERTY_IMAGE_URL =
+  "https://xfrcwgafqy20sjqa.public.blob.vercel-storage.com/images/property-main.jpg";
+
 export const mockProperty: Property = {
   id: "casablanca-ocala-main",
   title: "Casablanca Ocala",
   description:
     "Experience luxury living in this stunning Ocala property. Perfect for family gatherings and peaceful getaways, featuring modern amenities and spectacular views.",
   price: 299,
-  imageUrl: "/images/property-main.jpg",
+  imageUrl: PROPERTY_IMAGE_URL,
   airbnbUrl: "https://airbnb.com/your-property-link",
   vrboUrl: "https://vrbo.com/your-property-link",
   amenities: [

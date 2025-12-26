@@ -1,20 +1,68 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import SearchBar from "@/components/search/SearchBar";
 import { useBreakpoint } from "@/hooks/useMediaQuery";
 
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
+const HERO_IMAGE_URL =
+  "https://xfrcwgafqy20sjqa.public.blob.vercel-storage.com/images/hero-image.jpg";
+
 export default function HeroSection() {
-  const isMobile = useBreakpoint();
+  const { isMobile } = useBreakpoint();
+  const heroHeight = isMobile
+    ? "var(--hero-mobile-height)"
+    : "var(--hero-desktop-height)";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const root = document.documentElement;
+    let prevWidth = window.innerWidth;
+
+    const setViewportHeights = () => {
+      const viewportHeight = window.innerHeight;
+      const mobilePx = clamp(viewportHeight * 0.65, 420, 720);
+      const desktopPx = clamp(viewportHeight * 0.9, 560, 980);
+
+      root.style.setProperty("--hero-mobile-height", `${mobilePx}px`);
+      root.style.setProperty("--hero-desktop-height", `${desktopPx}px`);
+    };
+
+    setViewportHeights();
+
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (Math.abs(width - prevWidth) > 80) {
+        prevWidth = width;
+        setViewportHeights();
+      }
+    };
+
+    const orientationMedia = window.matchMedia
+      ? window.matchMedia("(orientation: portrait)")
+      : null;
+    const handleOrientation = () => setViewportHeights();
+
+    window.addEventListener("resize", handleResize);
+    orientationMedia?.addEventListener("change", handleOrientation);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      orientationMedia?.removeEventListener("change", handleOrientation);
+    };
+  }, []);
 
   return (
     <section className="relative w-full">
       {/* Hero Container */}
-      <div className="relative h-[45vh] md:h-[90vh] w-full">
+      <div className="relative w-full" style={{ minHeight: heroHeight }}>
         <div className="absolute inset-0 overflow-hidden rounded-3xl my-5">
           <Image
-            src="/images/hero-image.jpg"
+            src={HERO_IMAGE_URL}
             alt="Casablanca Ocala Property"
             fill
             className="object-cover"

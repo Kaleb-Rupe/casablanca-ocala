@@ -23,9 +23,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} flex flex-col min-h-screen`} suppressHydrationWarning>
+      <body
+        className={`${inter.className} flex flex-col min-h-screen`}
+        suppressHydrationWarning
+      >
         <NavigationBar />
-        <main className="flex-grow pt-16">{children}</main>
+        <main className="flex-grow pt-[var(--header-offset)] transition-[padding] duration-300 ease-out">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

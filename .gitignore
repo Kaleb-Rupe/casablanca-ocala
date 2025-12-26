@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env*.local
+
+# local media assets (served from Vercel Blob instead)
+public/images/
+
+# helper logs
+upload-log.txt
