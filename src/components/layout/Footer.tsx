@@ -103,7 +103,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-700 mt-10 pt-6 text-center text-gray-400 text-sm">
-          <p>© {currentYear} Casablanca Ocala. Hosted by Analay Romero.</p>
+          <p>© {currentYear} Casablanca Ocala.</p>
         </div>
       </div>
     </footer>

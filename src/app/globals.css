@@ -60,11 +60,15 @@
   }
 
   .hero-title {
-    @apply text-white font-bold text-3xl text-left md:text-5xl;
+    @apply text-white font-bold text-left tracking-tight;
+    font-size: clamp(2rem, 5vw + 1rem, 4.5rem);
+    line-height: 1.05;
   }
 
   .hero-subtitle {
-    @apply text-white text-xs text-left md:text-lg;
+    @apply text-white text-left;
+    font-size: clamp(0.75rem, 0.5vw + 0.65rem, 1.125rem);
+    letter-spacing: 0.05em;
   }
 }
 

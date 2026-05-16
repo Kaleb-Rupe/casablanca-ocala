@@ -1,16 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { Images, Menu, X } from "lucide-react";
+import { Images } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const navLinks = [
-  { href: "/gallery", label: "Gallery" },
-] as const;
-
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
   const headerOffsetRef = useRef("0px");
@@ -68,27 +63,13 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    if (typeof document === "undefined" || typeof window === "undefined")
-      return;
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    if (!isMobile) return;
-
-    const initialOverflow = document.body.style.overflow;
-    document.body.style.overflow = isMenuOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = initialOverflow;
-    };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
     const headerHeight = shellRef.current?.offsetHeight ?? 96;
     const desiredOffset = `${Math.round(headerHeight) + 24}px`;
     document.documentElement.style.setProperty(
       "--header-offset",
       desiredOffset
     );
-  }, [isMenuOpen]);
+  }, []);
 
   const getHeaderOffsetValue = useCallback(() => {
     const parsed = parseFloat(headerOffsetRef.current);
@@ -154,7 +135,6 @@ export default function Header() {
   const containerPaddingStyles = {
     paddingTop: `calc(var(--safe-area-top, 0px) + 0.85rem)`,
   };
-  const mobileNavId = "primary-mobile-nav";
 
   return (
     <motion.header
@@ -217,67 +197,15 @@ export default function Header() {
                 </Link>
               </div>
 
-              <button
-                type="button"
-                className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-full border border-black/10 bg-white/80 text-darkGray shadow-sm md:hidden"
-                onClick={() => setIsMenuOpen((prev) => !prev)}
-                aria-label="Toggle menu"
-                aria-expanded={isMenuOpen}
-                aria-controls={mobileNavId}
-                aria-haspopup="true"
+              <Link
+                href="/gallery"
+                aria-label="Open photo gallery"
+                className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-full border border-black/10 bg-white/80 text-darkGray shadow-sm md:hidden transition hover:text-coral hover:border-coral/30"
               >
-                {isMenuOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
-              </button>
+                <Images className="h-5 w-5" aria-hidden="true" />
+              </Link>
             </div>
           </div>
-
-          <AnimatePresence initial={false}>
-            {isMenuOpen && (
-              <>
-                <motion.div
-                  key="mobile-nav-backdrop"
-                  className="fixed inset-0 z-[5] bg-black/20 md:hidden"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <motion.nav
-                  id={mobileNavId}
-                  key="mobile-nav"
-                  initial={{ opacity: 0, y: -6, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="md:hidden absolute top-[calc(100%+0.4rem)] right-3 z-10 w-[90vw] max-w-[400px] origin-top rounded-3xl border border-black/5 bg-white/95 px-5 py-4 text-darkGray shadow-[0_20px_50px_rgba(15,23,42,0.12)] backdrop-blur-2xl"
-                >
-                  <div className="flex flex-col gap-4 text-base">
-                    {navLinks.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className="link-hover text-darkGray/80"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                    <Link
-                      href="#book"
-                      className="rounded-full bg-gradient-to-r from-coral via-[#ff7a8e] to-coral px-4 py-2 text-center text-sm font-semibold text-white shadow-[0_10px_25px_rgba(238,77,100,0.35)]"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Plan your stay
-                    </Link>
-                  </div>
-                </motion.nav>
-              </>
-            )}
-          </AnimatePresence>
         </div>
       </div>
     </motion.header>
