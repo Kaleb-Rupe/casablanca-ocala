@@ -10,9 +10,9 @@ const inter = Inter({
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "https://casablancaocala.com");
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://www.casablancaocala.com");
 
 const TITLE = "Casablanca Ocala — Modern Vacation Rental in Ocala, FL";
 const DESCRIPTION =
