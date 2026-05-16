@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { MapPin, Instagram } from "lucide-react";
+import { mockProperty } from "@/lib/services/mockData";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -13,133 +13,97 @@ export default function Footer() {
       className="bg-darkGray text-white py-12"
       style={{ scrollMarginTop: "calc(var(--header-offset, 0px) + 24px)" }}
     >
-      <div className=" mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Contact Info */}
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
-            <h3 className="text-xl font-bold mb-4">Casablanca Ocala</h3>
-            <p className="text-gray-300">123 Luxury Lane</p>
-            <p className="text-gray-300">Ocala, FL 34470</p>
-            <p className="text-gray-300 mt-2">contact@casablancaocala.com</p>
+            <h3 className="text-xl font-bold mb-3">Casablanca Ocala</h3>
+            <p className="text-gray-300 text-sm">
+              A modern 4-bedroom retreat in Ocala&apos;s Fort King District —
+              sleeps 8, near the springs, downtown, and the World Equestrian
+              Center.
+            </p>
+            <p className="text-gray-300 text-sm mt-3 flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-coral" aria-hidden="true" />
+              Fort King District, Ocala, FL
+            </p>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-3">Book your stay</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link
-                  href="/about"
+                <a
+                  href={mockProperty.vrboUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-300 hover:text-coral transition-colors"
                 >
-                  About Us
-                </Link>
+                  Nightly stays on VRBO →
+                </a>
               </li>
               <li>
-                <Link
-                  href="/contact"
+                <a
+                  href={mockProperty.furnishedFinderUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-300 hover:text-coral transition-colors"
                 >
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/faq"
-                  className="text-gray-300 hover:text-coral transition-colors"
-                >
-                  FAQ
-                </Link>
+                  Monthly rentals on Furnished Finder →
+                </a>
               </li>
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Legal</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-3">Explore</h3>
+            <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/privacy"
+                  href="/gallery"
                   className="text-gray-300 hover:text-coral transition-colors"
                 >
-                  Privacy Policy
+                  Photo gallery
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/terms"
+                  href="/#nearby"
                   className="text-gray-300 hover:text-coral transition-colors"
                 >
-                  Terms of Service
+                  What&apos;s nearby
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/cookie-policy"
+                  href="/#rules"
                   className="text-gray-300 hover:text-coral transition-colors"
                 >
-                  Cookie Policy
+                  House rules
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#book"
+                  className="text-gray-300 hover:text-coral transition-colors"
+                >
+                  Plan your stay
                 </Link>
               </li>
             </ul>
-          </div>
-
-          {/* Social & Newsletter */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">Connect With Us</h3>
-            <div className="flex space-x-4 mb-6">
-              <motion.a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="text-gray-300 hover:text-coral transition-colors"
-              >
-                <Facebook className="w-6 h-6" />
-              </motion.a>
-              <motion.a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="text-gray-300 hover:text-coral transition-colors"
-              >
-                <Instagram className="w-6 h-6" />
-              </motion.a>
-              <motion.a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="text-gray-300 hover:text-coral transition-colors"
-              >
-                <Twitter className="w-6 h-6" />
-              </motion.a>
-            </div>
+            <a
+              href="https://instagram.com/casablanca_ocala"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-5 text-sm text-gray-300 hover:text-coral transition-colors"
+            >
+              <Instagram className="h-4 w-4" aria-hidden="true" />
+              @casablanca_ocala
+            </a>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-          <p>© {currentYear} Casablanca Ocala. All rights reserved.</p>
-          <p className="mt-2 text-sm">
-            This site is protected by reCAPTCHA and the Google{" "}
-            <a
-              href="https://policies.google.com/privacy"
-              className="underline hover:text-coral"
-            >
-              Privacy Policy
-            </a>{" "}
-            and{" "}
-            <a
-              href="https://policies.google.com/terms"
-              className="underline hover:text-coral"
-            >
-              Terms of Service
-            </a>{" "}
-            apply.
-          </p>
+        <div className="border-t border-gray-700 mt-10 pt-6 text-center text-gray-400 text-sm">
+          <p>© {currentYear} Casablanca Ocala. Hosted by Analay Romero.</p>
         </div>
       </div>
     </footer>

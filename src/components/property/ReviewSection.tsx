@@ -2,15 +2,7 @@
 
 import { motion } from "framer-motion";
 import { StarIcon } from "@heroicons/react/24/solid";
-
-interface Review {
-  id: string;
-  author: string;
-  rating: number;
-  text: string;
-  platform: "Airbnb" | "VRBO";
-  date: string;
-}
+import type { Review } from "@/lib/services/mockData";
 
 interface ReviewSectionProps {
   reviews: Review[];

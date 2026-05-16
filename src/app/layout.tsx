@@ -9,11 +9,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Casablanca Ocala - Luxury Vacation Rental",
+  title: "Casablanca Ocala — Modern Vacation Rental in Ocala, FL",
   description:
-    "Experience luxury living in Ocala, Florida. Book your stay at our premium vacation rental property through VRBO or Airbnb.",
+    "A bright, modern 4-bedroom retreat in Ocala's Fort King District. Sleeps 8, near the springs, downtown, and the World Equestrian Center. Book nightly stays on VRBO or monthly rentals on Furnished Finder.",
   keywords:
-    "Ocala vacation rental, luxury rental, VRBO, Airbnb, Florida accommodation",
+    "Ocala vacation rental, Ocala Florida rental, World Equestrian Center, VRBO Ocala, Furnished Finder Ocala, monthly rental Florida",
 };
 
 export default function RootLayout({

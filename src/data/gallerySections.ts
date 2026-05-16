@@ -32,8 +32,8 @@ const section = (
 
 export const gallerySections: GallerySection[] = [
   section("exterior", "Exterior", "Pondside vistas & woodland escapes.", [
-    "hero-image.jpg",
-    "property-main.jpg",
+    "hero-image.png",
+    "property-main.png",
   ]),
   section("living-room", "Living Room", "Expansive seating & warm textures.", [
     "Living Room/Ocala House -28.webp",

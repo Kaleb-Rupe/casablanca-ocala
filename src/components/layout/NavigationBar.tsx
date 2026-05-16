@@ -2,14 +2,11 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Images, Menu, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/#properties", label: "Properties" },
   { href: "/gallery", label: "Gallery" },
-  { href: "#contact", label: "Contact" },
 ] as const;
 
 export default function Header() {
@@ -196,34 +193,24 @@ export default function Header() {
                   <span className="text-xl font-semibold">Ocala</span>
                 </Link>
                 <div className="hidden sm:flex items-center gap-2 text-[0.7rem] text-darkGray/70">
-                  <span className="flex items-center gap-1 rounded-full border border-black/5 bg-white px-3 py-1 shadow-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Availability synced
-                  </span>
                   <span className="rounded-full border border-black/5 bg-white px-3 py-1 tracking-[0.3em] shadow-sm">
-                    VRBO • Airbnb
+                    VRBO • Furnished Finder
                   </span>
                 </div>
               </div>
 
-              <nav className="hidden flex-1 items-center justify-center space-x-6 text-sm md:flex">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="link-hover text-darkGray/70 transition hover:text-darkGray"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
+              <div className="hidden flex-1" />
 
               <div className="hidden flex-none items-center gap-3 md:flex">
-                <div className="rounded-full border border-black/5 bg-white px-3 py-1 text-xs text-darkGray/70 shadow-sm">
-                  Boutique stay
-                </div>
                 <Link
-                  href="#contact"
+                  href="/gallery"
+                  className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-white px-4 py-2 text-sm text-darkGray shadow-sm transition hover:text-coral hover:border-coral/30"
+                >
+                  <Images className="h-4 w-4" aria-hidden="true" />
+                  Gallery
+                </Link>
+                <Link
+                  href="#book"
                   className="rounded-full bg-gradient-to-r from-coral via-[#ff7a8e] to-coral px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(238,77,100,0.35)] transition hover:opacity-90"
                 >
                   Plan your stay
@@ -280,7 +267,7 @@ export default function Header() {
                       </Link>
                     ))}
                     <Link
-                      href="#contact"
+                      href="#book"
                       className="rounded-full bg-gradient-to-r from-coral via-[#ff7a8e] to-coral px-4 py-2 text-center text-sm font-semibold text-white shadow-[0_10px_25px_rgba(238,77,100,0.35)]"
                       onClick={() => setIsMenuOpen(false)}
                     >

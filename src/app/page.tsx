@@ -1,8 +1,9 @@
 import PropertyCard from "@/components/property/PropertyCard";
-import { mockProperty, mockReviews } from "@/lib/services/mockData";
-import ReviewSection from "@/components/property/ReviewSection";
+import { mockProperty } from "@/lib/services/mockData";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
+import WhatsNearby from "@/components/home/WhatsNearby";
+import HouseRules from "@/components/home/HouseRules";
 
 export default function Home() {
   return (
@@ -11,7 +12,6 @@ export default function Home() {
         <div className="mx-5">
           <HeroSection />
 
-          {/* Main Content */}
           <section
             id="properties"
             className="my-8"
@@ -27,7 +27,8 @@ export default function Home() {
       <div className="w-full bg-white">
         <div className="mx-5">
           <FeaturesSection />
-          <ReviewSection reviews={mockReviews} />
+          <WhatsNearby />
+          <HouseRules />
         </div>
       </div>
     </div>

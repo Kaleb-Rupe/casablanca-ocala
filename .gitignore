@@ -43,6 +43,11 @@ next-env.d.ts
 
 # local media assets (served from Vercel Blob instead)
 public/images/
+public/videos/
 
 # helper logs
 upload-log.txt
+
+# PAI work artifacts
+MEMORY/
+video-upload.log
