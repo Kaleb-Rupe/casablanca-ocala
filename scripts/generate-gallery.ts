@@ -1,12 +1,13 @@
 /**
- * Reads public/images/ and emits a `gallerySections.ts` data file
- * reflecting every actual image file on disk.
+ * Reads public/images/ recursively and emits a `gallerySections.ts` data file
+ * reflecting every actual image folder on disk.
  *
  * Run with: pnpm tsx scripts/generate-gallery.ts
  *
- * Section order, labels, and descriptions live in SECTION_META below.
- * Folders not listed in SECTION_META are appended at the end with a
- * generated label and a TODO description for the owner to refine.
+ * Pills always use the EXACT folder name (the leaf folder, if nested).
+ * Section order is controlled by SECTION_ORDER below; unknown folders are
+ * appended at the end alphabetically. Curated section descriptions live in
+ * SECTION_DESCRIPTIONS; folders without an entry get a generic fallback.
  */
 import { readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -19,143 +20,124 @@ const OUTPUT_FILE = fileURLToPath(
 
 const IMAGE_EXTS = new Set([".webp", ".jpg", ".jpeg", ".png"]);
 
-interface SectionMeta {
-  id: string;
+interface DiscoveredFolder {
+  /** Folder name shown on the pill (leaf folder, e.g. "Blue Room"). */
   name: string;
-  description: string;
+  /** Path under public/images, e.g. "Bedrooms/Blue Room". */
+  relPath: string;
+  /** Image filenames in this folder. */
+  files: string[];
 }
 
-const SECTION_META: Record<string, SectionMeta> = {
-  Front: {
-    id: "exterior",
-    name: "Exterior",
-    description: "Curb-side first impressions and dusk-lit facades.",
-  },
-  Patio: {
-    id: "patio",
-    name: "Patio & Outdoor",
-    description: "Hot tub, outdoor seating, and woodland surrounds.",
-  },
-  "Living Room": {
-    id: "living-room",
-    name: "Living Room",
-    description: "Open-plan seating with warm textures and natural light.",
-  },
-  Kitchen: {
-    id: "kitchen",
-    name: "Kitchen",
-    description: "Modern appliances, ample counter space, and a chef-friendly layout.",
-  },
-  "Dining Area": {
-    id: "dining-area",
-    name: "Dining Area",
-    description: "A statement table that brings the whole group together.",
-  },
-  "Blue Room": {
-    id: "blue-room",
-    name: "Blue Room",
-    description: "Calming palette with a queen bed and plush bedding.",
-  },
-  "Green Room": {
-    id: "green-room",
-    name: "Green Room",
-    description: "Nature-inspired suite with garden views and a queen bed.",
-  },
-  "Orange Room": {
-    id: "orange-room",
-    name: "Orange Room",
-    description: "Sunny accents and playful lighting.",
-  },
-  "Purple Room": {
-    id: "purple-room",
-    name: "Purple Room",
-    description: "Layered textiles and a king bed for restful nights.",
-  },
-  Bathrooms: {
-    id: "bathrooms",
-    name: "Bathrooms",
-    description: "Spa-inspired finishes and polished tile across both bathrooms.",
-  },
-  Hallway: {
-    id: "hallway",
-    name: "Hallway",
-    description: "Architectural lines connecting the home's living spaces.",
-  },
-  Garage: {
-    id: "garage",
-    name: "Garage",
-    description: "Covered parking and additional storage.",
-  },
+// Optional curated descriptions. Keys are leaf folder names. Without an entry,
+// a generic "A look at the <folder>." description is used.
+const SECTION_DESCRIPTIONS: Record<string, string> = {
+  Exterior: "Curb-side first impressions and dusk-lit facades.",
+  Patio: "Hot tub, outdoor seating, and woodland surrounds.",
+  "Living Room": "Open-plan seating with warm textures and natural light.",
+  Kitchen: "Modern appliances, ample counter space, and a chef-friendly layout.",
+  "Dining Area": "A statement table that brings the whole group together.",
+  "Blue Room": "Calming palette with a queen bed and plush bedding.",
+  "Clay Room": "Earthy tones and warm bedding for a restful retreat.",
+  "Green Room": "Nature-inspired suite with garden views and a queen bed.",
+  "Purple Room": "Layered textiles and a king bed for restful nights.",
+  Bathroom: "Spa-inspired finishes and polished tile.",
+  Hallway: "Architectural lines connecting the home's living spaces.",
+  Amenities: "Hot tub, smart TV, and the comforts that make stays effortless.",
 };
 
+// Display order. Leaf folder names matching here come first in that order;
+// anything else is appended alphabetically.
 const SECTION_ORDER = [
-  "Front",
+  "Exterior",
   "Patio",
   "Living Room",
   "Kitchen",
   "Dining Area",
+  "Amenities",
   "Blue Room",
+  "Clay Room",
   "Green Room",
-  "Orange Room",
   "Purple Room",
-  "Bathrooms",
+  "Bathroom",
   "Hallway",
-  "Garage",
 ];
 
-async function listImagesInFolder(folder: string): Promise<string[]> {
-  const fullPath = join(IMAGES_DIR, folder);
-  const entries = await readdir(fullPath, { withFileTypes: true });
-  return entries
-    .filter((entry) => entry.isFile())
-    .filter((entry) => entry.name !== ".DS_Store")
-    .filter((entry) => {
+const toId = (folder: string) =>
+  folder
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+async function discover(currentRel = ""): Promise<DiscoveredFolder[]> {
+  const abs = join(IMAGES_DIR, currentRel);
+  const entries = await readdir(abs, { withFileTypes: true });
+
+  const files: string[] = [];
+  const dirs: string[] = [];
+
+  for (const entry of entries) {
+    if (entry.name === ".DS_Store") continue;
+    if (entry.isDirectory()) {
+      dirs.push(entry.name);
+    } else if (entry.isFile()) {
       const lower = entry.name.toLowerCase();
-      return [...IMAGE_EXTS].some((ext) => lower.endsWith(ext));
-    })
-    .map((entry) => entry.name)
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-}
+      if ([...IMAGE_EXTS].some((ext) => lower.endsWith(ext))) {
+        files.push(entry.name);
+      }
+    }
+  }
 
-async function main() {
-  const entries = await readdir(IMAGES_DIR, { withFileTypes: true });
-  const folders = entries
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name);
+  const results: DiscoveredFolder[] = [];
 
-  const ordered = [
-    ...SECTION_ORDER.filter((name) => folders.includes(name)),
-    ...folders.filter((name) => !SECTION_ORDER.includes(name)),
-  ];
-
-  const sections: Array<{
-    meta: SectionMeta;
-    paths: string[];
-  }> = [];
-
-  for (const folder of ordered) {
-    const images = await listImagesInFolder(folder);
-    if (images.length === 0) continue;
-    const meta =
-      SECTION_META[folder] ??
-      ({
-        id: folder.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-        name: folder,
-        description: `TODO: write a one-line description for "${folder}".`,
-      } satisfies SectionMeta);
-    sections.push({
-      meta,
-      paths: images.map((file) => `${folder}/${file}`),
+  // A folder with images becomes its own section (the leaf-name pattern).
+  // Only top-level loose files (hero-image.png, property-main.png) are
+  // ignored — they're not bedroom photos.
+  if (currentRel !== "" && files.length > 0) {
+    const segments = currentRel.split("/");
+    results.push({
+      name: segments[segments.length - 1],
+      relPath: currentRel,
+      files: files.sort((a, b) =>
+        a.localeCompare(b, undefined, { numeric: true })
+      ),
     });
   }
 
-  const formatted = sections
-    .map(
-      ({ meta, paths }) =>
-        `  section(${JSON.stringify(meta.id)}, ${JSON.stringify(meta.name)}, ${JSON.stringify(meta.description)}, [\n${paths
-          .map((p) => `    ${JSON.stringify(p)},`)
-          .join("\n")}\n  ]),`
-    )
+  for (const dir of dirs.sort()) {
+    const nestedRel = currentRel ? `${currentRel}/${dir}` : dir;
+    const nested = await discover(nestedRel);
+    results.push(...nested);
+  }
+
+  return results;
+}
+
+async function main() {
+  const all = await discover();
+
+  const orderIndex = (name: string) => {
+    const idx = SECTION_ORDER.indexOf(name);
+    return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
+  };
+
+  const ordered = all.sort((a, b) => {
+    const ai = orderIndex(a.name);
+    const bi = orderIndex(b.name);
+    if (ai !== bi) return ai - bi;
+    return a.name.localeCompare(b.name);
+  });
+
+  const formatted = ordered
+    .map((folder) => {
+      const description =
+        SECTION_DESCRIPTIONS[folder.name] ??
+        `A look at the ${folder.name.toLowerCase()}.`;
+      const paths = folder.files.map((file) => `${folder.relPath}/${file}`);
+      return `  section(${JSON.stringify(toId(folder.name))}, ${JSON.stringify(folder.name)}, ${JSON.stringify(description)}, [\n${paths
+        .map((p) => `    ${JSON.stringify(p)},`)
+        .join("\n")}\n  ]),`;
+    })
     .join("\n");
 
   const fileContents = `// AUTO-GENERATED by scripts/generate-gallery.ts — re-run after adding new images.
@@ -197,9 +179,9 @@ ${formatted}
 `;
 
   await writeFile(OUTPUT_FILE, fileContents, "utf8");
-  console.log(`✓ Wrote ${sections.length} sections to ${OUTPUT_FILE}`);
-  for (const { meta, paths } of sections) {
-    console.log(`  ${meta.name}: ${paths.length} image${paths.length === 1 ? "" : "s"}`);
+  console.log(`✓ Wrote ${ordered.length} sections to ${OUTPUT_FILE}`);
+  for (const folder of ordered) {
+    console.log(`  ${folder.name}: ${folder.files.length} image${folder.files.length === 1 ? "" : "s"} (${folder.relPath})`);
   }
 }
 
