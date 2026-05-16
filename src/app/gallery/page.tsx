@@ -322,7 +322,20 @@ export default function GalleryPage() {
                 >
                   <X className="h-5 w-5" />
                 </button>
-                <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-black/30">
+                <motion.div
+                  className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-black/30 touch-pan-y"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.35}
+                  onDragEnd={(_, info) => {
+                    const threshold = 60;
+                    if (info.offset.x > threshold) {
+                      goToNeighbor("prev");
+                    } else if (info.offset.x < -threshold) {
+                      goToNeighbor("next");
+                    }
+                  }}
+                >
                   {(() => {
                     const section = gallerySections.find(
                       (s) => s.id === lightbox.sectionId
@@ -335,8 +348,9 @@ export default function GalleryPage() {
                         alt={`${section.name} — image ${lightbox.index + 1} of ${section.images.length}`}
                         fill
                         sizes="100vw"
-                        className="object-contain"
+                        className="object-contain pointer-events-none select-none"
                         priority
+                        draggable={false}
                         onLoadingComplete={() => setLightboxLoading(false)}
                       />
                     );
@@ -344,7 +358,7 @@ export default function GalleryPage() {
                   <AnimatePresence>
                     {lightboxLoading && (
                       <motion.div
-                        className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40"
+                        className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 pointer-events-none"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -356,7 +370,13 @@ export default function GalleryPage() {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                  <p
+                    aria-hidden="true"
+                    className="md:hidden absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/40 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-white/70 pointer-events-none"
+                  >
+                    Swipe ‹ ›
+                  </p>
+                </motion.div>
                 <div className="mt-4 flex items-center justify-between text-sm text-white/80">
                   <button
                     type="button"

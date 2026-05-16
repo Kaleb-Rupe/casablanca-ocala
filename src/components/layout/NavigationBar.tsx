@@ -2,10 +2,17 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Images } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Home, Images } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function Header() {
+  const pathname = usePathname();
+  const isOnGallery = pathname === "/gallery";
+  const altNavHref = isOnGallery ? "/" : "/gallery";
+  const AltNavIcon = isOnGallery ? Home : Images;
+  const altNavLabel = isOnGallery ? "Home" : "Gallery";
+  const altNavAriaLabel = isOnGallery ? "Back to home" : "Open photo gallery";
   const [isPinned, setIsPinned] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
   const headerOffsetRef = useRef("0px");
@@ -183,14 +190,14 @@ export default function Header() {
 
               <div className="hidden flex-none items-center gap-3 md:flex">
                 <Link
-                  href="/gallery"
+                  href={altNavHref}
                   className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-white px-4 py-2 text-sm text-darkGray shadow-sm transition hover:text-coral hover:border-coral/30"
                 >
-                  <Images className="h-4 w-4" aria-hidden="true" />
-                  Gallery
+                  <AltNavIcon className="h-4 w-4" aria-hidden="true" />
+                  {altNavLabel}
                 </Link>
                 <Link
-                  href="#book"
+                  href={isOnGallery ? "/#book" : "#book"}
                   className="rounded-full bg-gradient-to-r from-coral via-[#ff7a8e] to-coral px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(238,77,100,0.35)] transition hover:opacity-90"
                 >
                   Plan your stay
@@ -198,11 +205,11 @@ export default function Header() {
               </div>
 
               <Link
-                href="/gallery"
-                aria-label="Open photo gallery"
+                href={altNavHref}
+                aria-label={altNavAriaLabel}
                 className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-full border border-black/10 bg-white/80 text-darkGray shadow-sm md:hidden transition hover:text-coral hover:border-coral/30"
               >
-                <Images className="h-5 w-5" aria-hidden="true" />
+                <AltNavIcon className="h-5 w-5" aria-hidden="true" />
               </Link>
             </div>
           </div>
