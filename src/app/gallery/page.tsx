@@ -4,11 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useInView } from "react-intersection-observer";
-import { InstagramPost } from "@/types/instagram";
-import { fetchInstagramPosts } from "@/lib/services/instagram";
-import GallerySkeleton from "@/components/gallery/GallerySkeleton";
-import { gallerySections, type GallerySection } from "@/data/gallerySections";
+import {
+  gallerySections,
+  type GallerySection,
+} from "@/data/gallerySections";
+import InstagramFeed from "@/components/gallery/InstagramFeed";
 
 type GallerySectionTabsProps = {
   sections: GallerySection[];
@@ -88,7 +88,7 @@ function GallerySectionTabs({
               key={section.id}
               type="button"
               onClick={() => onSelect(section.id)}
-              className={`snap-start rounded-full border px-4 py-2 text-sm font-medium transition ${
+              className={`snap-start whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2 ${
                 isActive
                   ? "border-transparent bg-coral text-white shadow-lg shadow-coral/30"
                   : "border-darkGray/15 bg-white text-darkGray hover:border-darkGray/40"
@@ -128,8 +128,6 @@ function GallerySectionTabs({
 }
 
 export default function GalleryPage() {
-  const [posts, setPosts] = useState<InstagramPost[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedSectionId, setSelectedSectionId] = useState(
     gallerySections[0]?.id ?? ""
   );
@@ -141,27 +139,6 @@ export default function GalleryPage() {
   const [imageLoadState, setImageLoadState] = useState<Record<string, boolean>>(
     {}
   );
-
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  });
-
-  useEffect(() => {
-    const loadPosts = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchInstagramPosts();
-        setPosts(data);
-      } catch (error) {
-        console.error("Error loading Instagram posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadPosts();
-  }, []);
 
   const selectedSection = useMemo(
     () => gallerySections.find((section) => section.id === selectedSectionId),
@@ -177,7 +154,7 @@ export default function GalleryPage() {
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      if (!lightbox || !selectedSection) return;
+      if (!lightbox) return;
       if (event.key === "Escape") {
         setLightbox(null);
       } else if (event.key === "ArrowRight") {
@@ -243,23 +220,40 @@ export default function GalleryPage() {
     };
   }, [lightbox]);
 
+  const totalPhotos = useMemo(
+    () => gallerySections.reduce((sum, s) => sum + s.images.length, 0),
+    []
+  );
+
   return (
     <>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col gap-6">
-          <div className="space-y-3">
-            <motion.h1
-              className="text-4xl font-bold text-darkGray"
-              initial={{ opacity: 0, y: 20 }}
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="flex flex-col gap-8">
+          <div className="space-y-3 max-w-3xl">
+            <motion.p
+              className="text-sm font-medium text-coral tracking-wide uppercase"
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              Casa Casablanca Gallery
+              {totalPhotos} photos · {gallerySections.length} rooms
+            </motion.p>
+            <motion.h1
+              className="text-4xl md:text-5xl font-bold text-darkGray tracking-tight"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
+              Photo Gallery
             </motion.h1>
-            <p className="text-darkGray/70 max-w-3xl">
-              Browse each space through curated sets. Tap a room to jump
-              straight to the photos you care about on mobile, or click through
-              on desktop for a more immersive view.
-            </p>
+            <motion.p
+              className="text-darkGray/70"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              Browse the property room by room. Tap any image for a closer look —
+              use ← → keys or swipe to move through the set.
+            </motion.p>
           </div>
 
           <GallerySectionTabs
@@ -272,135 +266,44 @@ export default function GalleryPage() {
             {selectedSection && (
               <motion.section
                 key={selectedSection.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className="space-y-4"
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="space-y-6"
               >
-                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.35em] text-darkGray/50">
+                    <p className="text-sm uppercase tracking-[0.35em] text-darkGray/50 mb-1">
                       {selectedSection.name}
                     </p>
-                    <h2 className="text-2xl font-semibold text-darkGray">
+                    <h2 className="text-2xl md:text-3xl font-semibold text-darkGray max-w-2xl">
                       {selectedSection.description}
                     </h2>
                   </div>
-                  <div className="text-sm text-darkGray/60">
+                  <span className="inline-flex items-center self-start md:self-auto rounded-full bg-beige px-3 py-1 text-xs font-medium text-darkGray/70">
                     {selectedSection.images.length} photos
-                  </div>
+                  </span>
                 </div>
 
-                <div className="relative grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                  {selectedSection.images.map((url, index) => (
-                    <motion.button
-                      key={url}
-                      type="button"
-                      onClick={() => openLightbox(index)}
-                      className={`relative aspect-[4/3] overflow-hidden rounded-2xl bg-beige/60 shadow-sm focus-visible:outline focus-visible:outline-4 focus-visible:outline-coral/40 ${
-                        index % 5 === 0 ? "md:col-span-2 md:row-span-2" : ""
-                      }`}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <Image
-                        src={url}
-                        alt={`${selectedSection.name} detail ${index + 1}`}
-                        fill
-                        loading={index === 0 ? "eager" : "lazy"}
-                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        className="object-cover transition-transform duration-500 hover:scale-105"
-                        onLoadingComplete={() => handleImageLoaded(url)}
-                      />
-                      {!imageLoadState[url] && (
-                        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-white/40 via-white/10 to-white/40" />
-                      )}
-                    </motion.button>
-                  ))}
-                </div>
+                <RoomGrid
+                  section={selectedSection}
+                  imageLoadState={imageLoadState}
+                  onImageLoaded={handleImageLoaded}
+                  onOpenLightbox={openLightbox}
+                />
               </motion.section>
             )}
           </AnimatePresence>
         </div>
 
-        <motion.div
-          className="mt-12 border-t border-darkGray/10 pt-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="mb-6 flex flex-col gap-2">
-            <p className="text-sm uppercase tracking-[0.35em] text-darkGray/50">
-              Social Highlights
-            </p>
-            <h2 className="text-2xl font-semibold text-darkGray">
-              Latest Instagram Moments
-            </h2>
-          </div>
-
-          {loading ? (
-            <GallerySkeleton />
-          ) : (
-            <motion.div
-              ref={ref}
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[180px] md:auto-rows-[220px]"
-              initial="hidden"
-              animate={inView ? "visible" : "hidden"}
-              variants={{
-                visible: {
-                  transition: {
-                    staggerChildren: 0.08,
-                  },
-                },
-              }}
-            >
-              {posts.map((post) => (
-                <motion.div
-                  key={post.id}
-                  className={`relative rounded-xl overflow-hidden ${
-                    post.aspectRatio && post.aspectRatio > 1.2
-                      ? "col-span-2"
-                      : "col-span-1"
-                  } ${
-                    post.aspectRatio && post.aspectRatio > 1.5
-                      ? "row-span-2"
-                      : "row-span-1"
-                  }`}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                >
-                  <a
-                    href={post.permalink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full h-full group"
-                  >
-                    <Image
-                      src={post.mediaUrl}
-                      alt={post.caption || "Gallery image"}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
-                      <p className="text-white text-sm md:text-base text-center line-clamp-3">
-                        {post.caption}
-                      </p>
-                    </div>
-                  </a>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </motion.div>
+        <InstagramFeed />
       </div>
 
       <AnimatePresence>
         {lightbox && (
           <motion.div
-            className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[1100] bg-black/80 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -413,7 +316,7 @@ export default function GalleryPage() {
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-4">
               <div className="pointer-events-auto relative w-full max-w-5xl">
                 <button
-                  className="absolute -top-10 right-0 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+                  className="absolute -top-12 right-0 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
                   onClick={closeLightbox}
                   aria-label="Close preview"
                 >
@@ -429,7 +332,7 @@ export default function GalleryPage() {
                     return (
                       <Image
                         src={url}
-                        alt="Expanded gallery view"
+                        alt={`${section.name} — image ${lightbox.index + 1} of ${section.images.length}`}
                         fill
                         sizes="100vw"
                         className="object-contain"
@@ -457,7 +360,7 @@ export default function GalleryPage() {
                 <div className="mt-4 flex items-center justify-between text-sm text-white/80">
                   <button
                     type="button"
-                    className={`flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-medium transition hover:bg-white/20 ${
+                    className={`flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-medium transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
                       lightboxLoading ? "cursor-not-allowed opacity-50" : ""
                     }`}
                     onClick={() => goToNeighbor("prev")}
@@ -467,9 +370,20 @@ export default function GalleryPage() {
                     <ChevronLeft className="h-4 w-4" />
                     Prev
                   </button>
+                  {(() => {
+                    const section = gallerySections.find(
+                      (s) => s.id === lightbox.sectionId
+                    );
+                    if (!section) return null;
+                    return (
+                      <span className="text-xs uppercase tracking-[0.3em] text-white/60">
+                        {lightbox.index + 1} / {section.images.length}
+                      </span>
+                    );
+                  })()}
                   <button
                     type="button"
-                    className={`flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-medium transition hover:bg-white/20 ${
+                    className={`flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-medium transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
                       lightboxLoading ? "cursor-not-allowed opacity-50" : ""
                     }`}
                     onClick={() => goToNeighbor("next")}
@@ -486,5 +400,80 @@ export default function GalleryPage() {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+interface RoomGridProps {
+  section: GallerySection;
+  imageLoadState: Record<string, boolean>;
+  onImageLoaded: (url: string) => void;
+  onOpenLightbox: (index: number) => void;
+}
+
+function RoomGrid({
+  section,
+  imageLoadState,
+  onImageLoaded,
+  onOpenLightbox,
+}: RoomGridProps) {
+  const [first, ...rest] = section.images;
+  return (
+    <div className="space-y-4">
+      {first && (
+        <motion.button
+          type="button"
+          onClick={() => onOpenLightbox(0)}
+          className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl bg-beige/60 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <Image
+            src={first}
+            alt={`${section.name} hero`}
+            fill
+            loading="eager"
+            sizes="(max-width: 1024px) 100vw, 1200px"
+            className="object-cover transition-transform duration-700 hover:scale-105"
+            onLoadingComplete={() => onImageLoaded(first)}
+          />
+          {!imageLoadState[first] && (
+            <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-white/40 via-white/10 to-white/40" />
+          )}
+        </motion.button>
+      )}
+
+      {rest.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+          {rest.map((url, idx) => {
+            const realIndex = idx + 1;
+            return (
+              <motion.button
+                key={url}
+                type="button"
+                onClick={() => onOpenLightbox(realIndex)}
+                className="relative aspect-square overflow-hidden rounded-2xl bg-beige/60 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.04, duration: 0.35 }}
+              >
+                <Image
+                  src={url}
+                  alt={`${section.name} detail ${realIndex}`}
+                  fill
+                  loading="lazy"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover transition-transform duration-500 hover:scale-105"
+                  onLoadingComplete={() => onImageLoaded(url)}
+                />
+                {!imageLoadState[url] && (
+                  <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-white/40 via-white/10 to-white/40" />
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
