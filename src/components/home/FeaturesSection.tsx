@@ -34,6 +34,14 @@ export default function FeaturesSection() {
   return (
     <section className="my-16 md:my-24">
       <div className="max-w-6xl mx-auto">
+        <div className="mb-10 md:mb-12 max-w-2xl">
+          <p className="text-sm font-medium text-coral tracking-wide uppercase mb-2">
+            Why guests love it
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-darkGray">
+            A retreat that just works
+          </h2>
+        </div>
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
