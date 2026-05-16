@@ -49,5 +49,7 @@ public/videos/
 upload-log.txt
 
 # PAI work artifacts
-MEMORY/
+MEMORY
 video-upload.log
+Plans
+instructions

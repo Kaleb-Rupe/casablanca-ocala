@@ -8,12 +8,35 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://casablancaocala.com");
+
+const TITLE = "Casablanca Ocala — Modern Vacation Rental in Ocala, FL";
+const DESCRIPTION =
+  "A bright, modern 4-bedroom retreat in Ocala's Fort King District. Sleeps 8, near the springs, downtown, and the World Equestrian Center. Book nightly stays on VRBO or monthly rentals on Furnished Finder.";
+
 export const metadata: Metadata = {
-  title: "Casablanca Ocala — Modern Vacation Rental in Ocala, FL",
-  description:
-    "A bright, modern 4-bedroom retreat in Ocala's Fort King District. Sleeps 8, near the springs, downtown, and the World Equestrian Center. Book nightly stays on VRBO or monthly rentals on Furnished Finder.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
   keywords:
     "Ocala vacation rental, Ocala Florida rental, World Equestrian Center, VRBO Ocala, Furnished Finder Ocala, monthly rental Florida",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "Casablanca Ocala",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
