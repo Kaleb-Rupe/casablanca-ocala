@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { Property } from "@/lib/services/mockData";
 import {
@@ -37,13 +37,12 @@ export default function PropertyLayout({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Booking Section */}
           <div className="w-full order-2 lg:order-1 flex justify-center">
-            <AnimatePresence>
               <motion.div
                 className="bg-white rounded-3xl shadow-lg p-6 md:p-8 w-full max-w-xl"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 <div className="space-y-6">
                   <div>
@@ -113,25 +112,22 @@ export default function PropertyLayout({
                   </div>
                 </div>
               </motion.div>
-            </AnimatePresence>
           </div>
 
-          {/* Images Section */}
-          <AnimatePresence>
-            <motion.div
-              className="w-full order-1 lg:order-2"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
+          <motion.div
+            className="w-full order-1 lg:order-2"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+          >
               <div className="relative aspect-square w-full">
-                {/* Main Large Image */}
                 <div className="relative w-full h-full rounded-3xl overflow-hidden">
                   <Image
                     src={imageUrl}
                     alt={title}
                     fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
                     priority
                   />
@@ -173,50 +169,43 @@ export default function PropertyLayout({
                   </span>
                 </motion.button>
 
-                {/* Property Info Card Overlay */}
-                <AnimatePresence>
-                  <motion.div
-                    className="absolute bottom-4 md:bottom-8 -left-6 md:-left-8 bg-white rounded-xl md:rounded-2xl shadow-2xl p-4 w-[64%] md:w-[55%] md:max-w-sm"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <h2 className="text-xs md:text-base font-semibold text-darkGray mb-0.5 md:mb-1 truncate">
-                      {title}
-                    </h2>
-                    <div className="flex items-center gap-1.5 md:gap-2 text-gray-500 text-[10px] md:text-sm">
-                      <HomeIcon className="w-3 h-3 md:w-4 md:h-4 shrink-0" />
-                      <span className="truncate">
-                        {location.neighborhood}, {location.city}, {location.state}
-                      </span>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
+                <motion.div
+                  className="absolute bottom-4 md:bottom-8 -left-6 md:-left-8 bg-white rounded-xl md:rounded-2xl shadow-2xl p-4 w-[64%] md:w-[55%] md:max-w-sm"
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.4, ease: "easeOut", delay: 0.25 }}
+                >
+                  <h2 className="text-xs md:text-base font-semibold text-darkGray mb-0.5 md:mb-1 truncate">
+                    {title}
+                  </h2>
+                  <div className="flex items-center gap-1.5 md:gap-2 text-gray-500 text-[10px] md:text-sm">
+                    <HomeIcon className="w-3 h-3 md:w-4 md:h-4 shrink-0" />
+                    <span className="truncate">
+                      {location.neighborhood}, {location.city}, {location.state}
+                    </span>
+                  </div>
+                </motion.div>
 
-                {/* Smaller Overlapping Image */}
-                <AnimatePresence>
-                  <motion.div
-                    className="absolute -bottom-8 -right-4 lg:-bottom-14 lg:-right-9 w-[40%] lg:w-[50%] aspect-square"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="relative w-full h-full rounded-xl md:rounded-2xl overflow-hidden border-2 md:border-4 border-white shadow-2xl">
-                      <Image
-                        src={detailImageUrl}
-                        alt={`${title} detail`}
-                        fill
-                        className="object-cover"
-                        priority
-                      />
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
+                <motion.div
+                  className="absolute -bottom-8 -right-4 lg:-bottom-14 lg:-right-9 w-[40%] lg:w-[50%] aspect-square"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.5, ease: "easeOut", delay: 0.35 }}
+                >
+                  <div className="relative w-full h-full rounded-xl md:rounded-2xl overflow-hidden border-2 md:border-4 border-white shadow-2xl">
+                    <Image
+                      src={detailImageUrl}
+                      alt={`${title} detail`}
+                      fill
+                      sizes="(max-width: 1024px) 40vw, 25vw"
+                      className="object-cover"
+                    />
+                  </div>
+                </motion.div>
               </div>
             </motion.div>
-          </AnimatePresence>
         </div>
       </div>
 

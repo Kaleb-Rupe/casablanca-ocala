@@ -64,8 +64,13 @@ export default function HeroSection() {
             src={HERO_IMAGE_URL}
             alt="Casablanca Ocala Property"
             fill
+            sizes="100vw"
             className="object-cover"
             priority
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-tr from-black/55 via-black/15 to-transparent"
           />
         </div>
 
