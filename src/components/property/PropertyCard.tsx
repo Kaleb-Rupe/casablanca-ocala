@@ -145,19 +145,33 @@ export default function PropertyLayout({
                   transition={{ type: "spring", stiffness: 220, damping: 18 }}
                   whileHover={{ scale: 1.04 }}
                 >
-                  <span className="relative flex h-6 w-6 md:h-7 md:w-7 items-center justify-center">
+                  <span className="relative flex h-7 w-7 md:h-8 md:w-8 items-center justify-center">
                     <motion.span
-                      className="absolute inset-0 rounded-full bg-coral motion-reduce:hidden"
+                      className="absolute inset-0 rounded-full bg-coral/50 motion-reduce:hidden"
                       aria-hidden="true"
-                      initial={{ scale: 1, opacity: 0.6 }}
-                      animate={{ scale: 2, opacity: 0 }}
+                      initial={{ scale: 0.95, opacity: 0.55 }}
+                      animate={{ scale: 1.9, opacity: 0 }}
                       transition={{
-                        duration: 1.8,
+                        duration: 2.4,
                         repeat: Infinity,
                         ease: "easeOut",
                       }}
                     />
-                    <PlayIcon className="relative w-4 h-4 md:w-5 md:h-5 text-coral shrink-0" />
+                    <motion.span
+                      className="absolute inset-0 rounded-full bg-coral/50 motion-reduce:hidden"
+                      aria-hidden="true"
+                      initial={{ scale: 0.95, opacity: 0.55 }}
+                      animate={{ scale: 1.9, opacity: 0 }}
+                      transition={{
+                        duration: 2.4,
+                        repeat: Infinity,
+                        ease: "easeOut",
+                        delay: 1.2,
+                      }}
+                    />
+                    <span className="relative flex h-full w-full items-center justify-center rounded-full bg-coral/10">
+                      <PlayIcon className="w-3.5 h-3.5 md:w-4 md:h-4 text-coral translate-x-px" />
+                    </span>
                   </span>
                   <span className="flex flex-col">
                     <span className="text-xs md:text-sm font-medium text-darkGray">
