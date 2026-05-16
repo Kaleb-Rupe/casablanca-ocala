@@ -69,7 +69,6 @@ export default function HeroSection() {
           />
         </div>
 
-        {/* Text block — desktop sits where the old SearchBar did so it anchors the bottom-left */}
         <div
           className={`absolute bottom-12 ${
             isMobile ? "text-center left-0 right-0" : "text-left left-4"
@@ -87,7 +86,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* CTA — mobile only, overlapping bottom of hero (mirrors the old SearchBar pattern) */}
       <div className="relative -mt-7 px-4 md:hidden">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

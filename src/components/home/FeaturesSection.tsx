@@ -1,45 +1,65 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Sparkles, MapPinned, Heart } from "lucide-react";
 
 interface Feature {
+  icon: typeof Sparkles;
   title: string;
   description: string;
 }
 
 const features: Feature[] = [
   {
-    title: "Luxury Amenities",
+    icon: Sparkles,
+    title: "Modern & move-in ready",
     description:
-      "Enjoy premium features including a private pool, fully equipped kitchen, and smart home technology.",
+      "A bright open layout, fully equipped kitchen, hot tub on the patio, and four comfortable bedrooms that sleep up to eight.",
   },
   {
-    title: "Prime Location",
+    icon: MapPinned,
+    title: "Right next to everything",
     description:
-      "Located in the heart of Ocala, minutes away from World Equestrian Center and top attractions.",
+      "Fort King District puts you minutes from Silver Springs, downtown Ocala, and a short drive to the World Equestrian Center.",
   },
   {
-    title: "Professional Service",
+    icon: Heart,
+    title: "Built for the whole crew",
     description:
-      "24/7 support and concierge services to ensure a comfortable and memorable stay.",
+      "Pet-friendly, family-friendly, and consistently rated 10/10 by guests on VRBO for cleanliness, check-in, and communication.",
   },
 ];
 
 export default function FeaturesSection() {
   return (
-    <section className="grid md:grid-cols-3 gap-8 my-16">
-      {features.map((feature, index) => (
-        <motion.div
-          key={feature.title}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.2 }}
-          className="p-6 rounded-lg bg-white shadow-md"
-        >
-          <h3 className="text-xl font-bold text-coral mb-2">{feature.title}</h3>
-          <p className="text-gray-600">{feature.description}</p>
-        </motion.div>
-      ))}
+    <section className="my-16 md:my-24">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ delay: index * 0.1, duration: 0.4 }}
+                className="p-6 md:p-7 rounded-2xl bg-white shadow-sm border border-black/5"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-beige text-coral mb-4">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <h3 className="text-lg md:text-xl font-semibold text-darkGray mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+                  {feature.description}
+                </p>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
     </section>
   );
 }

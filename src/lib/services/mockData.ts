@@ -64,57 +64,14 @@ export const mockProperty: Property = {
   },
 };
 
-export interface Review {
-  id: string;
-  author: string;
-  rating: number;
-  text: string;
-  platform: "VRBO" | "Furnished Finder";
-  date: string;
-}
-
-export const mockReviews: Review[] = [
-  {
-    id: "1",
-    author: "Cynthia T.",
-    rating: 5,
-    text: "Beautiful place to stay. Great location to downtown and Silver Springs State Park.",
-    platform: "VRBO",
-    date: "2026-03-20",
-  },
-  {
-    id: "2",
-    author: "Jenny R.",
-    rating: 5,
-    text: "Beautifully renovated, warm and welcoming, with a fully stocked kitchen. Loved the hot tub and the easy 10–15 minute drive to Silver Springs State Park.",
-    platform: "VRBO",
-    date: "2025-12-29",
-  },
-  {
-    id: "3",
-    author: "Stephanie R.",
-    rating: 5,
-    text: "Truly a gem. The host was attentive, the home had everything we needed, and the neighborhood is calm and quiet. We plan on coming back.",
-    platform: "VRBO",
-    date: "2026-01-06",
-  },
-];
-
 export const mockPropertyService = {
   getProperty: async (): Promise<Property | null> => {
-    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));
     return mockProperty;
   },
 
   getAllProperties: async (): Promise<Property[]> => {
-    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));
     return [mockProperty];
-  },
-
-  getReviews: async (): Promise<Review[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return mockReviews;
   },
 };
