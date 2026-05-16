@@ -149,10 +149,14 @@ export default function PropertyLayout({
                     <motion.span
                       className="absolute inset-0 rounded-full bg-coral/50 motion-reduce:hidden"
                       aria-hidden="true"
-                      initial={{ scale: 0.95, opacity: 0.55 }}
-                      animate={{ scale: 1.9, opacity: 0 }}
+                      initial={false}
+                      animate={{
+                        scale: [0.9, 1.9],
+                        opacity: [0, 0.55, 0],
+                      }}
                       transition={{
                         duration: 2.4,
+                        times: [0, 0.15, 1],
                         repeat: Infinity,
                         ease: "easeOut",
                       }}
@@ -160,10 +164,14 @@ export default function PropertyLayout({
                     <motion.span
                       className="absolute inset-0 rounded-full bg-coral/50 motion-reduce:hidden"
                       aria-hidden="true"
-                      initial={{ scale: 0.95, opacity: 0.55 }}
-                      animate={{ scale: 1.9, opacity: 0 }}
+                      initial={false}
+                      animate={{
+                        scale: [0.9, 1.9],
+                        opacity: [0, 0.55, 0],
+                      }}
                       transition={{
                         duration: 2.4,
+                        times: [0, 0.15, 1],
                         repeat: Infinity,
                         ease: "easeOut",
                         delay: 1.2,
